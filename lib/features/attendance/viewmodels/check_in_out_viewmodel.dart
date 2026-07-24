@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/attendance_model.dart';
+import '../../../core/mocks/mock_database.dart';
 
 class CheckInOutState {
   final bool isProcessing;
   final String? successMessage;
   final String? errorMessage;
   final String? lastScannedStudentId;
+  final Student? scannedStudent;
   final AttendanceStatus? lastAction;
 
   CheckInOutState({
@@ -13,6 +15,7 @@ class CheckInOutState {
     this.successMessage,
     this.errorMessage,
     this.lastScannedStudentId,
+    this.scannedStudent,
     this.lastAction,
   });
 
@@ -21,6 +24,7 @@ class CheckInOutState {
     String? successMessage,
     String? errorMessage,
     String? lastScannedStudentId,
+    Student? scannedStudent,
     AttendanceStatus? lastAction,
   }) {
     return CheckInOutState(
@@ -28,6 +32,7 @@ class CheckInOutState {
       successMessage: successMessage, // Intentional reset if not provided
       errorMessage: errorMessage,     // Intentional reset if not provided
       lastScannedStudentId: lastScannedStudentId ?? this.lastScannedStudentId,
+      scannedStudent: scannedStudent ?? this.scannedStudent,
       lastAction: lastAction ?? this.lastAction,
     );
   }
@@ -40,7 +45,18 @@ class CheckInOutViewModel extends Notifier<CheckInOutState> {
   }
 
   void setScannedStudent(String studentId) {
-    state = state.copyWith(lastScannedStudentId: studentId, successMessage: 'Scanned Student: $studentId');
+    final student = MockDatabase.getStudentById(studentId);
+    if (student != null) {
+      state = state.copyWith(
+        lastScannedStudentId: studentId,
+        scannedStudent: student,
+        successMessage: 'Scanned: ${student.name}',
+      );
+    } else {
+      state = state.copyWith(
+        errorMessage: 'Student not found: $studentId',
+      );
+    }
   }
 
   Future<void> recordAttendance(AttendanceStatus status) async {
@@ -58,9 +74,10 @@ class CheckInOutViewModel extends Notifier<CheckInOutState> {
     final actionName = status.toString().split('.').last;
     state = state.copyWith(
       isProcessing: false,
-      successMessage: 'Successfully recorded: $actionName for student ${state.lastScannedStudentId}',
+      successMessage: 'Successfully recorded: $actionName for student ${state.scannedStudent?.name ?? state.lastScannedStudentId}',
       lastAction: status,
       lastScannedStudentId: null, // Reset after successful action
+      scannedStudent: null, // Reset after successful action
     );
   }
   

@@ -77,20 +77,37 @@ class CheckInOutScreen extends ConsumerWidget {
                         // Mock scanning a student
                         viewModel.setScannedStudent('STU-9981');
                       },
-                      child: const Text('Mock Scan "STU-9981"'),
+                      child: const Text('Mock Scan "John Doe"'),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Mock scanning a student
+                        viewModel.setScannedStudent('STU-1234');
+                      },
+                      child: const Text('Mock Scan "Jane Smith"'),
                     )
                   ],
                 ),
               ),
               const SizedBox(height: 16),
               
-              if (state.lastScannedStudentId != null)
+              if (state.scannedStudent != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Text(
-                    'Ready to log: ${state.lastScannedStudentId}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
-                    textAlign: TextAlign.center,
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Ready to log:',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        '${state.scannedStudent!.name} (${state.scannedStudent!.grade})',
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
 
