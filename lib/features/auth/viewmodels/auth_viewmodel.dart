@@ -24,13 +24,13 @@ class AuthViewModel extends Notifier<AuthState> {
   }
 
   Future<void> login(String username, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = AuthState(user: state.user, isLoading: true, error: null);
     
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
 
     if (username.isEmpty || password.isEmpty) {
-      state = state.copyWith(isLoading: false, error: 'Username and password cannot be empty');
+      state = AuthState(user: state.user, isLoading: false, error: 'Username and password cannot be empty');
       return;
     }
 
@@ -45,7 +45,7 @@ class AuthViewModel extends Notifier<AuthState> {
     }
 
     final user = UserModel(id: '123', name: username, role: role);
-    state = state.copyWith(user: user, isLoading: false);
+    state = AuthState(user: user, isLoading: false, error: null);
   }
   
   void logout() {
