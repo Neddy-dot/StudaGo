@@ -5,7 +5,9 @@ import '../viewmodels/auth_viewmodel.dart';
 import '../models/user_model.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  final String? preselectedRole;
+
+  const LoginScreen({super.key, this.preselectedRole});
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -14,6 +16,14 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.preselectedRole != null) {
+      _usernameController.text = widget.preselectedRole!;
+    }
+  }
 
   @override
   void dispose() {
